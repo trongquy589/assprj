@@ -1,0 +1,135 @@
+Bảng Users (Người dùng)
+
+UserID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi người dùng.
+
+FullName (VARCHAR(100), NOT NULL): Họ và tên đầy đủ.
+
+Email (VARCHAR(100), NOT NULL, UNIQUE): Địa chỉ email (đăng nhập).
+
+Password (VARCHAR(255), NOT NULL): Mật khẩu (đã băm).
+
+Role (ENUM('Citizen', 'AreaLeader', 'Police', 'Admin'), NOT NULL): Vai trò (Công dân, Tổ trưởng, Công an, Quản trị viên).
+
+PhoneNumber (VARCHAR(20)): Số điện thoại liên hệ.
+
+DateOfBirth (DATE): Ngày sinh.
+
+Gender (ENUM('Male', 'Female', 'Other')): Giới tính.
+
+Address (TEXT): Địa chỉ thường trú/tạm trú.
+
+IdentityNumber (VARCHAR(20), UNIQUE): Số CMND/CCCD.
+
+PlaceOfIssue (VARCHAR(100)): Nơi cấp CMND/CCCD.
+
+DateOfIssue (DATE): Ngày cấp CMND/CCCD.
+
+Nationality (VARCHAR(50)): Quốc tịch.
+
+Ethnic (VARCHAR(50)): Dân tộc.
+
+Religion (VARCHAR(50)): Tôn giáo.
+
+Occupation (VARCHAR(100)): Nghề nghiệp.
+
+CreatedAt (TIMESTAMP DEFAULT CURRENT_TIMESTAMP): Thời gian tạo tài khoản.
+
+UpdatedAt (TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP): Thời gian cập nhật tài khoản.
+
+Bảng Households (Hộ khẩu)
+
+HouseholdID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi hộ khẩu.
+
+HeadOfHouseholdID (INT, FOREIGN KEY references Users(UserID)): ID của chủ hộ (tham chiếu đến bảng Users).
+
+Address (TEXT, NOT NULL): Địa chỉ hộ khẩu.
+
+CreatedDate (DATE DEFAULT CURRENT_DATE): Ngày lập hộ khẩu.
+
+Ward (VARCHAR(100)): Phường/Xã.
+
+District (VARCHAR(100)): Quận/Huyện.
+
+Province (VARCHAR(100)): Tỉnh/Thành phố.
+
+Bảng Registrations (Đăng ký)
+
+RegistrationID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi đăng ký.
+
+UserID (INT, FOREIGN KEY references Users(UserID)): ID người đăng ký (tham chiếu đến bảng Users).
+
+RegistrationType (ENUM('Permanent', 'Temporary', 'TemporaryStay'), NOT NULL): Loại đăng ký (Thường trú, Tạm trú, Lưu trú).
+
+StartDate (DATE, NOT NULL): Ngày bắt đầu đăng ký.
+
+EndDate (DATE): Ngày kết thúc đăng ký (nếu có).
+
+Reason (TEXT): Lý do đăng ký.
+
+Status (ENUM('Pending', 'Approved', 'Rejected'), DEFAULT 'Pending'): Trạng thái hồ sơ (Chờ duyệt, Đã duyệt, Từ chối).
+
+ApprovedBy (INT, FOREIGN KEY references Users(UserID)): ID người phê duyệt (tham chiếu đến bảng Users).
+
+ApprovalDate (DATETIME): Ngày phê duyệt.
+
+Comments (TEXT): Ghi chú/lý do từ chối.
+
+HouseholdID (INT, FOREIGN KEY references Households(HouseholdID)): ID của hộ khẩu đăng ký (nếu có).
+
+CreatedAt (TIMESTAMP DEFAULT CURRENT_TIMESTAMP): Thời gian tạo đăng ký.
+
+UpdatedAt (TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP): Thời gian cập nhật đăng ký.
+
+Bảng HouseholdMembers (Thành viên hộ khẩu)
+
+MemberID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi thành viên.
+
+HouseholdID (INT, FOREIGN KEY references Households(HouseholdID)): ID hộ khẩu (tham chiếu đến bảng Households).
+
+UserID (INT, FOREIGN KEY references Users(UserID)): ID người dùng (tham chiếu đến bảng Users).
+
+Relationship (VARCHAR(50), NOT NULL): Quan hệ với chủ hộ.
+
+Bảng Notifications (Thông báo)
+
+NotificationID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi thông báo.
+
+UserID (INT, FOREIGN KEY references Users(UserID)): ID người nhận (tham chiếu đến bảng Users).
+
+Message (TEXT, NOT NULL): Nội dung thông báo.
+
+SentDate (DATETIME DEFAULT CURRENT_TIMESTAMP): Thời gian gửi.
+
+IsRead (BOOLEAN DEFAULT FALSE): Đã đọc hay chưa.
+
+Type (ENUM('Registration', 'Household', 'Other')): Loại thông báo (Đăng ký, Hộ khẩu, Khác).
+
+ReferenceID (INT): ID tham chiếu đến bảng liên quan (ví dụ RegistrationID).
+
+Bảng Logs (Lịch sử hoạt động)
+
+LogID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi bản ghi.
+
+UserID (INT, FOREIGN KEY references Users(UserID)): ID người thực hiện (tham chiếu đến bảng Users).
+
+Action (VARCHAR(100), NOT NULL): Hành động được thực hiện (ví dụ: "Duyệt đăng ký", "Tạo hộ khẩu").
+
+Timestamp (DATETIME DEFAULT CURRENT_TIMESTAMP): Thời gian thực hiện.
+
+Details (TEXT): Chi tiết về hành động (ví dụ: ID của đăng ký/hộ khẩu bị tác động).
+
+Bảng Attachments (Tài liệu đính kèm)
+
+AttachmentID (INT, PRIMARY KEY, AUTO_INCREMENT): ID duy nhất cho mỗi tài liệu.
+
+RegistrationID (INT, FOREIGN KEY references Registrations(RegistrationID)): ID đăng ký liên quan.
+
+FileName (VARCHAR(255), NOT NULL): Tên file.
+
+FilePath (VARCHAR(255), NOT NULL): Đường dẫn file.
+
+FileType (VARCHAR(50)): Loại file (ví dụ: image/jpeg, application/pdf).
+
+FileSize (INT): Kích thước file (bytes).
+
+UploadDate (DATETIME DEFAULT CURRENT_TIMESTAMP): Thời gian tải lên.
