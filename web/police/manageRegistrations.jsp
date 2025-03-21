@@ -154,9 +154,8 @@
             <a href="home">Trang chủ</a>
             <a href="citizen">Quản lý công dân</a>
             <a href="dontu">Quản lý đơn từ</a>
-            <a href="registerTemporaryAbsence">Đăng ký tạm vắng</a>
             <a href="manageRegistrations.jsp">Quản lý Đơn</a>
-            <a href="notifications.jsp">Thông báo</a>
+            <a href="thongbao">Thông báo</a>
             <a href="support.jsp">Hỗ trợ</a>
         </div>
 
@@ -194,8 +193,8 @@
 
                         <td>
                             <button class="btn-detail" onclick="showDetails('<%= reg.getRegistrationID() %>')">Xem</button>
-                            <button class="btn-accept" onclick="acceptRegistration('<%= reg.getRegistrationID() %>')">Chấp nhận</button>
-                            <button class="btn-reject" onclick="rejectRegistration('<%= reg.getRegistrationID() %>')">Từ chối</button>
+                            <button class="btn-accept" onclick="acceptRegistration('<%= reg.getRegistrationID() %>', '<%= reg.getUserID() %>')">Chấp nhận</button>
+                            <button class="btn-reject" onclick="rejectRegistration('<%= reg.getRegistrationID() %>', '<%= reg.getUserID() %>')">Từ chối</button>
                         </td>
 
                     </tr>
@@ -213,6 +212,7 @@
                 <span class="close" onclick="closePopup()">&times;</span>
                 <h2>Chi tiết Đơn</h2>
                 <p><strong>ID:</strong> <span id="detailID"></span></p>
+                <p><strong>User ID</strong> <span id="userID"></span></p>
                 <p><strong>Người đăng ký:</strong> <span id="detailUser"></span></p>
                 <p><strong>Loại đăng ký:</strong> <span id="detailType"></span></p>
                 <p><strong>Ngày bắt đầu:</strong> <span id="detailStartDate"></span></p>
@@ -226,23 +226,25 @@
         </div>
 
         <script>
-            function acceptRegistration(registrationID) {
+            function acceptRegistration(registrationID, userID) {
             if (confirm("Bạn có chắc chắn muốn chấp nhận đơn này?")) {
-            fetch('dontu?action=accept&id=' + registrationID, {
+            fetch('dontu?action=accept&id=' + encodeURIComponent(registrationID) + '&userID=' + encodeURIComponent(userID), {
             method: 'POST'
             })
                     .then(response => response.json())
                     .then(data => {
                     alert(data.message);
-                    location.reload(); // Làm mới trang sau khi cập nhật
+                    location.reload();
                     })
                     .catch(error => console.error('Lỗi:', error));
             }
             }
 
-            function rejectRegistration(registrationID) {
+
+            function rejectRegistration(registrationID, userID) {
             if (confirm("Bạn có chắc chắn muốn từ chối đơn này?")) {
-            fetch('dontu?action=reject&id=' + registrationID, {
+            fetch('dontu?action=reject&id=' + encodeURIComponent(registrationID) + '&userID=' + encodeURIComponent(userID), {
+
             method: 'POST'
             })
                     .then(response => response.json())
@@ -263,6 +265,7 @@
             "<%= reg.getRegistrationID() %>": {
             "id": "<%= reg.getRegistrationID() %>",
                     "user": "<%= reg.getUserFullName() %>",
+                    "userID": "<%= reg.getUserID() %>",
                     "type": "<%= reg.getRegistrationType() %>",
                     "startDate": "<%= reg.getStartDate() %>",
                     "endDate": "<%= reg.getEndDate() %>",

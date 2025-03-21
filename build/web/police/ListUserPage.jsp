@@ -144,8 +144,7 @@
             <a href="home">Trang chủ</a>
             <a href="citizen">Quản lý công dân</a>
             <a href="dontu">Quản lý đơn từ</a>
-            <a href="registerTemporaryAbsence">Đăng ký tạm vắng</a>
-            <a href="citizenApplications.jsp">Hồ sơ của tôi</a>
+            <a href="manageRegistrations.jsp">Quản lý Đơn</a>
             <a href="thongbao">Thông báo</a>
             <a href="support.jsp">Hỗ trợ</a>
         </div>
